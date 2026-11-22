@@ -1,0 +1,1383 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DEEPAK INSTITUTE OF IT & MANAGEMENT | Official Portal & Franchise ERP</title>
+  <!-- JSZip for 1-click client-side ZIP download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    /* Global Reset & Theme Tokens */
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#06163e;
+      --blue:#075bc7;
+      --cyan:#09a8c5;
+      --gold:#ffc928;
+      --bg:#f1f6ff;
+      --text:#14264b;
+      --muted:#60708b;
+    }
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+    
+    /* Custom Toast Notification (No alert/confirm) */
+    #toastBox{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:360px}
+    .toast{background:#06163e;color:#fff;border-left:5px solid #ffc928;padding:12px 16px;border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,0.28);font-size:13.5px;animation:slideIn .25s ease}
+    @keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+    /* Top Live Bar */
+    .topbar{background:#030c24;color:#fff;font-size:13px;padding:7px 4%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #16306e}
+    .topbar a{color:var(--gold);text-decoration:none;font-weight:600}
+    .ticker-wrap{flex:1;min-width:220px;overflow:hidden;white-space:nowrap;margin:0 12px}
+    .ticker-move{display:inline-block;padding-left:100%;animation:ticker 28s linear infinite}
+    .ticker-move:hover{animation-play-state:paused}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+    .zip-dl-btn{background:linear-gradient(90deg,#ffc928,#ffb300);color:#06163e;border:0;border-radius:16px;padding:4px 12px;font-weight:bold;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+    .zip-dl-btn:hover{filter:brightness(1.08)}
+
+    /* Header */
+    header{background:linear-gradient(120deg,#06163e,#075bc7,#09a8c5);color:white;padding:18px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .header-left{display:flex;align-items:center;gap:16px}
+    .logo-box{width:88px;height:88px;border-radius:50%;border:3px solid var(--gold);background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 15px rgba(0,0,0,0.45)}
+    .logo-box img,.logo-box svg{width:100%;height:100%;object-fit:cover}
+    .brand h1{color:var(--gold);font-size:clamp(20px,3vw,30px);letter-spacing:.5px;line-height:1.2}
+    .brand p{font-size:13.5px;opacity:.95}
+    .header-badges{display:flex;gap:10px;flex-wrap:wrap}
+    .h-badge{background:rgba(255,255,255,0.14);border:1px solid rgba(255,201,40,0.5);padding:6px 12px;border-radius:8px;font-size:12px;text-align:center}
+    .h-badge strong{display:block;color:var(--gold);font-size:13px}
+
+    /* Sticky Navigation */
+    nav{background:var(--navy);display:flex;justify-content:center;flex-wrap:wrap;gap:5px;padding:10px 8px;position:sticky;top:0;z-index:100;box-shadow:0 4px 12px rgba(6,22,62,0.25)}
+    nav button{background:transparent;border:0;color:white;padding:8px 13px;border-radius:20px;font-weight:bold;font-size:13px;cursor:pointer;transition:.2s}
+    nav button:hover,nav button.active{background:var(--gold);color:#10224b}
+
+    /* Sections & Hero */
+    .page-section{display:none;animation:fadeIn .25s ease}
+    .page-section.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+    .hero,.page-hero{padding:48px 6%;text-align:center;color:white;background:linear-gradient(120deg,#06163ee8,#075bc7dd),url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400') center/cover}
+    .hero h2,.page-hero h2{font-size:clamp(25px,4.2vw,40px);color:var(--gold);margin-bottom:10px}
+    .hero p,.page-hero p{max-width:780px;margin:0 auto 14px;font-size:15.5px}
+
+    .btn{display:inline-block;background:var(--gold);color:#10224b;text-decoration:none;border:0;border-radius:25px;padding:10px 20px;margin:5px 4px;font-weight:bold;cursor:pointer;font-size:13.5px;transition:.2s}
+    .btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+    .btn-blue{background:var(--blue);color:#fff}
+    .btn-green{background:#0f9d58;color:#fff}
+    .btn-outline{background:transparent;border:2px solid var(--gold);color:var(--gold)}
+
+    .container{max-width:1200px;margin:auto;padding:30px 18px}
+    .section-title{text-align:center;color:#074a9f;font-size:27px;margin-bottom:8px}
+    .sub{text-align:center;color:var(--muted);margin:0 auto 22px;max-width:720px}
+
+    /* Quick Action Boxes */
+    .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-top:-30px;position:relative;z-index:10}
+    .q-box{background:#fff;border-radius:14px;padding:16px 10px;text-align:center;box-shadow:0 8px 22px rgba(10,36,88,0.12);border-bottom:4px solid var(--blue);cursor:pointer;transition:.25s}
+    .q-box:hover{transform:translateY(-4px);border-bottom-color:var(--gold)}
+    .q-icon{font-size:26px;margin-bottom:5px}
+    .q-box h4{color:var(--navy);font-size:14px}
+
+    /* Grids & Cards */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}
+    .two-col{display:grid;grid-template-columns:1.2fr 1fr;gap:22px;align-items:start}
+    .card,.panel{background:white;border-radius:16px;overflow:hidden;box-shadow:0 9px 24px #183e7618;border:1px solid #dce8f8}
+    .card{transition:.25s;display:flex;flex-direction:column}
+    .card:hover{transform:translateY(-4px)}
+    .card img{width:100%;height:150px;object-fit:cover;cursor:pointer}
+    .card-body{padding:16px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+    .card h3{color:#0752ad;margin-bottom:6px;font-size:17.5px}
+    .card p{color:var(--muted);font-size:13.5px;margin-bottom:10px}
+    .tag{display:inline-block;background:#e6f0ff;color:#0752ad;font-size:11px;font-weight:bold;padding:3px 9px;border-radius:12px;margin-bottom:7px;width:fit-content}
+    .panel{padding:22px;margin-top:18px}
+
+    /* Live Feed Boxes */
+    .feed-header{background:linear-gradient(90deg,var(--navy),var(--blue));color:#fff;padding:11px 16px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+    .feed-header span{background:var(--gold);color:#10224b;font-size:11px;padding:2px 8px;border-radius:10px}
+    .feed-list{padding:12px 16px;max-height:270px;overflow-y:auto}
+    .feed-item{padding:9px 0;border-bottom:1px dashed #d7e4f7;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px}
+    .feed-item:last-child{border-bottom:0}
+    .student-avatar{width:36px;height:36px;border-radius:50%;background:#075bc7;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0}
+
+    /* Syllabus & Tables */
+    .syllabus{display:none;border-top:4px solid var(--gold)}
+    .syllabus.show{display:block}
+    .syllabus ul{padding-left:22px;line-height:1.9;columns:2;margin:12px 0}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
+    th,td{border:1px solid #cbd7e8;padding:9px 10px;text-align:left}
+    th{background:#074a9f;color:#fff}
+
+    /* Forms */
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    label{font-weight:bold;font-size:13.5px;color:#14264b}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #cbd7e8;border-radius:9px;margin-top:5px;font:inherit;background:#fff}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(7,91,199,0.12)}
+    textarea{min-height:90px}
+    .full{grid-column:1/-1}
+    .notice{background:#fff7d6;border-left:4px solid var(--gold);padding:13px;border-radius:8px;margin:16px 0;font-size:13.5px}
+
+    /* Filter Pills */
+    .filter-bar{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+    .filter-btn{background:#fff;border:1px solid #bfd4f2;color:#074a9f;padding:7px 14px;border-radius:20px;font-weight:600;cursor:pointer;font-size:13px}
+    .filter-btn.active,.filter-btn:hover{background:#074a9f;color:#fff}
+
+    /* Portal Tabs */
+    .portal-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;border-bottom:2px solid #dce8f8;padding-bottom:10px}
+    .p-tab{background:#e8f0fe;border:0;padding:10px 16px;border-radius:8px;font-weight:bold;color:#06163e;cursor:pointer}
+    .p-tab.active{background:var(--blue);color:#fff}
+    .p-pane{display:none}
+    .p-pane.active{display:block}
+
+    /* ==================== FRANCHISE PARTNER ERP DASHBOARD (GIITM STYLE) ==================== */
+    .erp-shell{display:grid;grid-template-columns:270px 1fr;min-height:760px;background:#eef3fa;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(6,22,62,0.18);border:1px solid #c9daf3;margin-top:14px}
+    .erp-sidebar{background:linear-gradient(180deg,#08204a 0%,#051533 100%);color:#fff;padding:16px 12px;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
+    .erp-brand{display:flex;align-items:center;gap:10px;padding:8px 10px 14px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:6px}
+    .erp-brand-icon{width:38px;height:38px;border-radius:10px;background:#1e88e5;color:#fff;font-weight:bold;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .erp-cat{font-size:10.5px;letter-spacing:1px;color:#8cb3e8;font-weight:700;padding:10px 10px 2px;text-transform:uppercase}
+    .erp-menu-btn{width:100%;background:linear-gradient(90deg,#1572d6,#1f8ef1);color:#fff;border:0;border-radius:10px;padding:10px 12px;text-align:left;font-weight:600;font-size:13.5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.2s}
+    .erp-menu-btn:hover,.erp-menu-btn.active{background:linear-gradient(90deg,#1d8cf8,#00b4d8);box-shadow:0 4px 12px rgba(29,140,248,0.35)}
+    .erp-menu-dark{background:rgba(255,255,255,0.08)}
+    .erp-submenu{display:none;flex-direction:column;gap:4px;padding:6px 6px 6px 14px;background:rgba(0,0,0,0.22);border-radius:8px;margin-top:2px}
+    .erp-submenu.open{display:flex}
+    .erp-sub-item{background:transparent;border:0;color:#dbeafe;text-align:left;padding:6px 10px;border-radius:6px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:8px}
+    .erp-sub-item:hover,.erp-sub-item.active{background:rgba(255,255,255,0.14);color:#ffc928;font-weight:600}
+    .erp-sub-item::before{content:"•";color:#38bdf8;font-size:16px}
+
+    .erp-main{padding:20px;overflow-y:auto}
+    .erp-topbar{background:#fff;padding:14px 18px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 3px 10px rgba(0,0,0,0.05);margin-bottom:18px}
+    .erp-banner{background:linear-gradient(90deg,#0b2b6b,#1565c0);color:#fff;padding:12px 18px;border-radius:10px;font-weight:600;font-size:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    
+    /* Collection Report Cards */
+    .coll-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+    .coll-card{border-radius:14px;padding:18px;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,0.1)}
+    .coll-green{background:linear-gradient(135deg,#0f9d58,#0b8043)}
+    .coll-blue{background:linear-gradient(135deg,#1a73e8,#1557b0)}
+    .coll-purple{background:linear-gradient(135deg,#5e35b1,#4527a0)}
+    .coll-card small{font-size:11px;letter-spacing:.6px;opacity:.9;text-transform:uppercase;display:block}
+    .coll-card h3{font-size:26px;margin:6px 0}
+
+    /* Institute Overview Grid */
+    .ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+    .ov-card{background:#fff;border-radius:14px;padding:16px;border:1px solid #dce6f5;box-shadow:0 4px 12px rgba(15,35,75,0.05);display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s}
+    .ov-card:hover{transform:translateY(-3px);border-color:#1a73e8}
+    .ov-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .ov-card small{font-size:11px;color:#60708b;font-weight:700;display:block;text-transform:uppercase}
+    .ov-card strong{font-size:19px;color:#0f234b}
+
+    /* QR Payment Box */
+    .qr-card{max-width:440px;margin:14px auto;background:#fff;border:2px solid #075bc7;border-radius:16px;padding:22px;text-align:center;box-shadow:0 10px 26px rgba(7,91,199,0.15)}
+    .qr-frame{width:230px;height:230px;margin:12px auto;border:6px solid #06163e;border-radius:14px;padding:8px;background:#fff;display:flex;align-items:center;justify-content:center}
+    .qr-frame img,.qr-frame svg{width:100%;height:100%;object-fit:contain}
+
+    /* Certificate Box */
+    .cert-box{border:8px double #b8860b;background:#fffdf5;padding:26px;border-radius:12px;margin-top:16px;text-align:center}
+    .cert-box h2{color:#06163e;font-size:24px;margin-top:6px}
+    .cert-box h3{color:#b22222;margin:6px 0}
+
+    /* Govt Strip */
+    .govt-strip{background:#fff;border-top:1px solid #dce8f8;border-bottom:1px solid #dce8f8;padding:16px 5%;display:flex;justify-content:center;flex-wrap:wrap;gap:14px;align-items:center}
+    .govt-pill{background:#f4f8ff;border:1px solid #cdddf5;padding:9px 16px;border-radius:10px;font-weight:bold;color:#06163e;text-decoration:none;font-size:13px}
+
+    /* Footer */
+    footer{background:var(--navy);color:white;padding:34px 5% 20px;margin-top:34px}
+    .footer-grid{max-width:1180px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;text-align:left;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.15)}
+    footer h4{color:var(--gold);margin-bottom:10px;font-size:15.5px}
+    footer p,footer a{color:#dbe6ff;font-size:13.5px;text-decoration:none;display:block;margin-bottom:6px}
+    footer a:hover{color:var(--gold)}
+    .copyright{text-align:center;padding-top:15px;font-size:13px;color:#aebfe0}
+
+    @media print{
+      body *{visibility:hidden}
+      #certResult,#certResult *{visibility:visible}
+      #certResult{position:fixed;left:0;top:0;width:100%}
+    }
+
+    @media(max-width:860px){
+      .erp-shell{grid-template-columns:1fr}
+      .two-col,.form-grid{grid-template-columns:1fr}
+      .syllabus ul{columns:1}
+      header{justify-content:center;text-align:center}
+      .header-left{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastBox"></div>
+
+  <!-- Reusable Master SVG Symbols for Winged-D Logo & UPI Payment QR -->
+  <svg width="0" height="0" style="position:absolute;visibility:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="diRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e39d62"/>
+        <stop offset="40%" stop-color="#c67d43"/>
+        <stop offset="70%" stop-color="#f2b980"/>
+        <stop offset="100%" stop-color="#9e5b27"/>
+      </linearGradient>
+      <linearGradient id="diGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#f9e076"/>
+        <stop offset="50%" stop-color="#d4af37"/>
+        <stop offset="100%" stop-color="#f3d06b"/>
+      </linearGradient>
+      <symbol id="deepak-logo-svg" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="95" fill="#050505" stroke="url(#diRingGrad)" stroke-width="6.5"/>
+        <path d="M58 92 C35 82,18 66,12 52 C20 68,34 80,55 88 C32 84,15 74,8 64 C18 78,34 88,54 94 C32 94,16 90,10 84 C20 94,35 100,55 101 C36 104,22 104,16 101 C26 108,40 110,58 107 Z" fill="url(#diGoldGrad)"/>
+        <path d="M142 92 C165 82,182 66,188 52 C180 68,166 80,145 88 C168 84,185 74,192 64 C182 78,166 88,146 94 C168 94,184 90,190 84 C180 94,165 100,145 101 C164 104,178 104,184 101 C174 108,160 110,142 107 Z" fill="url(#diGoldGrad)"/>
+        <path d="M62 56 H104 C132 56,144 74,144 98 C144 122,132 140,104 140 H62 Z M80 72 V124 H102 C118 124,125 113,125 98 C125 83,118 72,102 72 Z" fill="url(#diGoldGrad)" stroke="#000" stroke-width="2"/>
+        <path d="M84 78 H101 C113 78,119 86,119 98 C119 110,113 118,101 118 H84 V112 H100 C109 112,113 106,113 98 C113 90,109 84,100 84 H84 Z" fill="#d91e18"/>
+        <text x="100" y="162" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="18.5" fill="#d91e18" stroke="#ffffff" stroke-width="1.3" paint-order="stroke fill">Deepak Institute</text>
+      </symbol>
+      <symbol id="deepak-qr-svg" viewBox="0 0 120 120">
+        <rect width="120" height="120" fill="#ffffff"/>
+        <path d="M10 10h30v30H10zm5 5v20h20V15zm5 5h10v10H20zM80 10h30v30H80zm5 5v20h20V15zm5 5h10v10H90zM10 80h30v30H10zm5 5v20h20V85zm5 5h10v10H20z" fill="#06163e"/>
+        <path d="M50 12h8v12h-8zm12 6h10v8H62zM48 34h14v10H48zm20 4h10v14H68zM14 48h12v10H14zm20 4h12v14H34zm22 6h14v12H56zm22-4h12v10H78zm16 6h14v14H94zM48 76h12v12H48zm18 4h14v10H66zm18 8h10v16H84zm-36 12h16v10H48zm22 2h10v10H70zm26-2h14v12H96z" fill="#06163e"/>
+        <rect x="42" y="46" width="36" height="16" rx="3" fill="#ffc928"/>
+        <text x="60" y="57" text-anchor="middle" font-size="8" font-weight="bold" fill="#06163e">PAY UPI</text>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- TOP LIVE MARQUEE BAR -->
+  <div class="topbar">
+    <div>📞 <a href="tel:8750092908">8750092908</a> | <a href="tel:7982716233">7982716233</a></div>
+    <div class="ticker-wrap">
+      <div class="ticker-move">
+        🎓 Admissions Open 2026–27: DCA, ADCA, MDCA, Tally Prime with GST, Programming (C, C++, Java, Python), Web Designing, Digital Marketing &amp; University Degree Guidance | 💳 Online QR Payment &amp; Franchise ERP Portal Active!
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="zip-dl-btn" onclick="downloadWebsiteZip()">📦 Download ZIP</button>
+      <span>✉️ <a href="mailto:dg.globalinstitute@gmail.com">dg.globalinstitute@gmail.com</a></span>
+    </div>
+  </div>
+
+  <!-- HEADER WITH OFFICIAL LOGO -->
+  <header>
+    <div class="header-left">
+      <div class="logo-box">
+        <svg><use href="#deepak-logo-svg"></use></svg>
+      </div>
+      <div class="brand">
+        <h1>DEEPAK INSTITUTE OF IT &amp; MANAGEMENT</h1>
+        <p>Learn • Grow • Succeed | Skill Development, Computer Education &amp; Academic Guidance</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <div class="h-badge"><strong>ISO &amp; Skill Oriented</strong>Practical IT Training</div>
+      <div class="h-badge"><strong>Head Office</strong>Plot No. 75, Najafgarh, New Delhi</div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION MENU -->
+  <nav id="mainNav">
+    <button class="active" onclick="showSection('home',this)">🏠 Home</button>
+    <button onclick="showSection('courses',this)">💻 Computer Courses</button>
+    <button onclick="showSection('ugpg',this)">🎓 UG / PG Courses</button>
+    <button onclick="showSection('admission',this)">📝 Admission Enquiry</button>
+    <button onclick="showSection('franchise',this)">🤝 Franchise</button>
+    <button onclick="showSection('portal',this)">🔐 Franchise &amp; Student Login</button>
+    <button onclick="showSection('payment',this)">💳 Online Fee / QR Payment</button>
+    <button onclick="showSection('contact',this)">📞 Contact Us</button>
+  </nav>
+
+  <!-- ==================== 1. HOME PAGE SECTION ==================== -->
+  <section id="home" class="page-section active">
+    <div class="hero">
+      <h2>Welcome to Deepak Institute of IT &amp; Management</h2>
+      <p>Empowering students with job-ready Computer Education, Programming, Tally GST, Digital Marketing, Vocational Training &amp; Higher Education Guidance across India.</p>
+      <button class="btn" onclick="showSection('admission')">Apply for Admission</button>
+      <button class="btn btn-outline" onclick="showSection('courses')">Explore 20+ Courses</button>
+      <button class="btn" onclick="showSection('portal');switchPortalTab('franchiseLoginTab')">🏢 Franchise Partner ERP Login</button>
+    </div>
+
+    <div class="container">
+      <!-- 6 Quick Boxes -->
+      <div class="quick-grid">
+        <div class="q-box" onclick="showSection('admission')">
+          <div class="q-icon">📝</div>
+          <h4>Online Registration</h4>
+        </div>
+        <div class="q-box" onclick="showSection('portal');switchPortalTab('verifyTab')">
+          <div class="q-icon">✅</div>
+          <h4>Student Verification</h4>
+        </div>
+        <div class="q-box" onclick="showSection('portal');switchPortalTab('certTab')">
+          <div class="q-icon">🏆</div>
+          <h4>Marksheet &amp; Certificate</h4>
+        </div>
+        <div class="q-box" onclick="showSection('portal');switchPortalTab('franchiseLoginTab')">
+          <div class="q-icon">🏢</div>
+          <h4>Franchise Admin ERP</h4>
+        </div>
+        <div class="q-box" onclick="showSection('payment')">
+          <div class="q-icon">📱</div>
+          <h4>Scan &amp; Pay QR</h4>
+        </div>
+        <div class="q-box" onclick="showSection('franchise')">
+          <div class="q-icon">🤝</div>
+          <h4>Apply for Franchise</h4>
+        </div>
+      </div>
+
+      <!-- About Deepak Institute + Live Feeds -->
+      <div class="two-col" style="margin-top:32px">
+        <div class="panel" style="margin-top:0">
+          <span class="tag">ABOUT OUR INSTITUTION</span>
+          <h2 style="color:#074a9f;margin-bottom:10px">About Deepak Institute of IT &amp; Management</h2>
+          <p style="margin-bottom:12px">
+            <strong>Deepak Institute of IT &amp; Management</strong> is dedicated to bridging the digital divide by providing affordable, practical, and industry-aligned computer literacy, software programming, accounting, and vocational skill development programmes.
+          </p>
+          <p style="margin-bottom:14px">
+            With modern computer labs, experienced faculty, project-based learning, and transparent online verification, we prepare learners for government exams, corporate jobs, freelancing, and entrepreneurship.
+          </p>
+          <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px">
+            <div style="background:#f1f6ff;padding:10px;border-radius:10px"><strong>🖥️ 100% Practical</strong><br><small>Hands-on lab sessions daily</small></div>
+            <div style="background:#f1f6ff;padding:10px;border-radius:10px"><strong>📜 Verifiable Certificates</strong><br><small>Online ID &amp; Marksheet check</small></div>
+            <div style="background:#f1f6ff;padding:10px;border-radius:10px"><strong>👨‍💻 Coding &amp; Web Dev</strong><br><small>C, C++, Java, Python, HTML/JS</small></div>
+            <div style="background:#f1f6ff;padding:10px;border-radius:10px"><strong>🏢 Franchise ERP</strong><br><small>Wallet, Marksheet &amp; Fee Portal</small></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="card">
+            <div class="feed-header">👨‍🎓 Recent Joined Students <span>LIVE 2026</span></div>
+            <div class="feed-list" id="recentStudentsList"></div>
+          </div>
+
+          <div class="card">
+            <div class="feed-header">📢 Latest News &amp; Events <span>UPDATES</span></div>
+            <div class="feed-list">
+              <div class="feed-item"><div><strong>New Batch Alert:</strong> ADCA, Tally Prime &amp; Python Programming batches starting every Monday.</div><small style="color:#075bc7;font-weight:bold">NEW</small></div>
+              <div class="feed-item"><div><strong>NIOS &amp; University Guidance:</strong> 10th/12th &amp; UG/PG session enquiry open at Study Centre.</div><small style="color:#075bc7;font-weight:bold">OPEN</small></div>
+              <div class="feed-item"><div><strong>Franchise Partner ERP:</strong> Wallet Recharge via QR, Online Admit Card &amp; Marksheet generation active.</div><small style="color:#075bc7;font-weight:bold">ERP</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Courses Preview -->
+      <h2 class="section-title" style="margin-top:34px">Popular Career &amp; Programming Courses</h2>
+      <p class="sub">Click on any course to view full syllabus or apply online.</p>
+      <div id="homeFeaturedCourses" class="grid"></div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-blue" onclick="showSection('courses')">View All 20 Courses →</button>
+      </div>
+    </div>
+
+    <!-- Digital India / NIELIT Strip -->
+    <div class="govt-strip">
+      <a class="govt-pill" href="https://www.digitalindia.gov.in" target="_blank" rel="noopener">🇮🇳 Digital India (digitalindia.gov.in)</a>
+      <a class="govt-pill" href="https://www.nielit.gov.in" target="_blank" rel="noopener">🏛️ NIELIT India (nielit.gov.in)</a>
+      <a class="govt-pill" href="https://www.skillindia.gov.in" target="_blank" rel="noopener">🛠️ Skill India Mission</a>
+      <a class="govt-pill" href="https://www.nios.ac.in" target="_blank" rel="noopener">📚 NIOS Open Schooling</a>
+    </div>
+  </section>
+
+  <!-- ==================== 2. COMPUTER COURSES SECTION ==================== -->
+  <section id="courses" class="page-section">
+    <div class="page-hero">
+      <h2>Explore All Computer &amp; Skill Courses</h2>
+      <p>कोर्स की image या <strong>View Syllabus</strong> पर क्लिक करें और पूरा सिलेबस देखें।</p>
+    </div>
+    <div class="container">
+      <div class="notice">यह सामान्य syllabus outline है। Official syllabus, eligibility, recognition और fees संबंधित University/authority से verify करें।</div>
+      <div class="filter-bar" id="courseFilters">
+        <button class="filter-btn active" onclick="filterCourses('All',this)">All Courses (20)</button>
+        <button class="filter-btn" onclick="filterCourses('Diploma',this)">Diploma</button>
+        <button class="filter-btn" onclick="filterCourses('Computer',this)">Computer &amp; Programming</button>
+        <button class="filter-btn" onclick="filterCourses('Digital',this)">Digital &amp; YouTube</button>
+        <button class="filter-btn" onclick="filterCourses('Skills',this)">Typing &amp; Soft Skills</button>
+        <button class="filter-btn" onclick="filterCourses('Technical',this)">AutoCAD &amp; Technical</button>
+        <button class="filter-btn" onclick="filterCourses('Vocational',this)">Vocational</button>
+        <button class="filter-btn" onclick="filterCourses('Education',this)">NIOS / University</button>
+      </div>
+      <div id="courseCards" class="grid"></div>
+      <div id="syllabusBox" class="panel syllabus">
+        <h2 id="syllabusTitle" style="color:#074a9f"></h2>
+        <ul id="syllabusList"></ul>
+        <button class="btn" onclick="applySelectedCourse()">Apply for this Course</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. UG / PG DEGREE COURSES SECTION ==================== -->
+  <section id="ugpg" class="page-section">
+    <div class="page-hero">
+      <h2>UG &amp; PG Degree Courses – Subject-wise Syllabus</h2>
+      <p>B.A., M.A., B.Com, M.Com, BBA, MBA, BCA, MCA, B.Sc, M.Sc, B.Ed एवं अन्य प्रोग्राम के सामान्य विषय देखें।</p>
+    </div>
+    <div class="container">
+      <div id="degreeCards" class="grid"></div>
+      <div id="degreeDetails" class="panel syllabus">
+        <h2 id="degreeTitle" style="color:#074a9f"></h2>
+        <ul id="degreeList"></ul>
+        <p class="notice">यह सामान्य विषय सूची है, आधिकारिक semester-wise syllabus नहीं। University के अनुसार papers अलग हो सकते हैं।</p>
+        <button class="btn" onclick="showSection('admission')">Enquire for UG/PG Admission</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 4. ADMISSION ENQUIRY SECTION ==================== -->
+  <section id="admission" class="page-section">
+    <div class="page-hero">
+      <h2>Online Admission Enquiry</h2>
+      <p>फॉर्म भरें और अपनी जानकारी सीधे WhatsApp पर भेजें।</p>
+    </div>
+    <div class="container">
+      <div class="panel">
+        <form onsubmit="sendWhatsApp(event)">
+          <div class="form-grid">
+            <div><label>Student Name *</label><input name="name" placeholder="पूरा नाम लिखें" required></div>
+            <div><label>Father's Name *</label><input name="father" placeholder="पिता का नाम" required></div>
+            <div><label>Mobile Number *</label><input name="mobile" type="tel" pattern="[0-9]{10}" placeholder="10 अंकों का मोबाइल नंबर" required></div>
+            <div>
+              <label>Qualification *</label>
+              <select name="qualification" required>
+                <option value="">चुनें</option>
+                <option>8th Pass</option>
+                <option>10th Pass</option>
+                <option>12th Pass</option>
+                <option>Graduate</option>
+                <option>Post Graduate</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="full">
+              <label>Select Course *</label>
+              <select name="course" id="courseSelect" required>
+                <option value="">कोर्स चुनें</option>
+              </select>
+            </div>
+            <div class="full"><label>Full Address *</label><textarea name="address" placeholder="गाँव/शहर, जिला, राज्य, पिन कोड" required></textarea></div>
+            <div class="full"><button class="btn" type="submit">📲 Submit Admission Enquiry on WhatsApp</button></div>
+          </div>
+        </form>
+      </div>
+      <p class="notice">यह enquiry form है, final admission confirmation नहीं। जानकारी WhatsApp पर भेजी जाएगी; website database में save नहीं होगी।</p>
+    </div>
+  </section>
+
+  <!-- ==================== 5. FRANCHISE MODEL & POLICY SECTION ==================== -->
+  <section id="franchise" class="page-section">
+    <div class="page-hero">
+      <h2>Franchise Model &amp; Affiliation Policy</h2>
+      <p>अपने शहर, राज्य या देश में Authorized Training Centre partnership के लिए enquiry करें।</p>
+    </div>
+    <div class="container">
+      <div class="grid">
+        <article class="card"><div class="card-body"><h3>1. Online Enquiry</h3><p>अपना नाम, मोबाइल, देश (Country) और राज्य (State) चुनकर आवेदन भेजें।</p></div></article>
+        <article class="card"><div class="card-body"><h3>2. Discussion &amp; Plan</h3><p>Courses, lab setup, space और centre operations पर विस्तृत चर्चा।</p></div></article>
+        <article class="card"><div class="card-body"><h3>3. Document Verification</h3><p>स्थान, बुनियादी ढाँचा, दस्तावेज़ और आवश्यक permissions की जाँच।</p></div></article>
+        <article class="card"><div class="card-body"><h3>4. Written Agreement</h3><p>Terms, fees, responsibilities और branding rights लिखित रूप में तय हों।</p></div></article>
+      </div>
+
+      <div class="panel">
+        <h3 style="color:#074a9f;margin-bottom:10px">📋 Franchise Terms &amp; Centre Policy</h3>
+        <ul style="padding-left:20px;line-height:1.9;color:#273b63">
+          <li><strong>Minimum Space &amp; Lab:</strong> कम से कम 300–500 sq. ft. जगह, कंप्यूटर लैब, इंटरनेट सुविधा एवं स्वच्छ क्लासरूम अनिवार्य।</li>
+          <li><strong>Transparency &amp; Compliance:</strong> केंद्र संचालक को सभी स्थानीय नियमों, फीस पारदर्शिता और छात्रों को सही जानकारी देने का पालन करना होगा।</li>
+          <li><strong>ERP &amp; Portal Access:</strong> अधिकृत केंद्र को Franchise Partner Dashboard, Wallet, Admit Card, Marksheet &amp; Certificate पोर्टल सुविधा मिलेगी।</li>
+        </ul>
+      </div>
+
+      <h2 class="section-title" style="margin-top:30px">Franchise Enquiry Form</h2>
+      <div class="panel">
+        <form onsubmit="sendFranchise(event)">
+          <div class="form-grid">
+            <div><label>Your Name *</label><input name="fname" placeholder="Applicant Full Name" required></div>
+            <div><label>Mobile Number *</label><input name="fmobile" type="tel" pattern="[0-9]{10}" placeholder="10-digit Mobile Number" required></div>
+            <div><label>Select Country *</label><select name="country" id="countrySelect" onchange="toggleStateField()" required></select></div>
+            <div><label>Select State / UT *</label><select name="state" id="stateSelect" required></select></div>
+            <div><label>City / District / Area *</label><input name="area" placeholder="शहर या क्षेत्र का नाम" required></div>
+            <div>
+              <label>Available Space</label>
+              <select name="space">
+                <option>Not decided</option>
+                <option>Below 300 sq. ft.</option>
+                <option>300–500 sq. ft.</option>
+                <option>500–1000 sq. ft.</option>
+                <option>Above 1000 sq. ft.</option>
+              </select>
+            </div>
+            <div class="full"><label>Message / Centre Details</label><textarea name="message" placeholder="अपने प्रस्तावित सेंटर के बारे में लिखें..."></textarea></div>
+            <div class="full"><button class="btn" type="submit">📲 Send Franchise Enquiry on WhatsApp</button></div>
+          </div>
+        </form>
+      </div>
+      <p class="notice"><b>महत्वपूर्ण:</b> यह केवल enquiry page है। कोई franchise approval, affiliation, guaranteed income या fixed investment का वादा नहीं। सभी शर्तें verification और signed agreement के बाद ही तय होंगी।</p>
+    </div>
+  </section>
+
+  <!-- ==================== 6. FRANCHISE PARTNER ERP & STUDENT PORTAL ==================== -->
+  <section id="portal" class="page-section">
+    <div class="page-hero">
+      <h2>Franchise Administration &amp; Student ERP Portal</h2>
+      <p>Franchise Partner Dashboard (Wallet, Students, Admit Card, Marksheet, Income/Expense) &amp; Student Verification</p>
+    </div>
+    <div class="container">
+      <div class="panel">
+        <div class="portal-tabs">
+          <button class="p-tab active" id="btn-franchiseLoginTab" onclick="switchPortalTab('franchiseLoginTab')">🏢 Franchise Partner Login (Admin ERP)</button>
+          <button class="p-tab" id="btn-studentLoginTab" onclick="switchPortalTab('studentLoginTab')">👨‍🎓 Student Login</button>
+          <button class="p-tab" id="btn-verifyTab" onclick="switchPortalTab('verifyTab')">✅ Student Verification</button>
+          <button class="p-tab" id="btn-certTab" onclick="switchPortalTab('certTab')">📜 Marksheet &amp; Certificate</button>
+        </div>
+
+        <!-- A. FRANCHISE PARTNER LOGIN + GIITM-STYLE ERP DASHBOARD -->
+        <div id="franchiseLoginTab" class="p-pane active">
+          <div id="frLoginFormBox">
+            <h3 style="color:#074a9f;margin-bottom:8px">Authorized Franchise Centre Administration Login</h3>
+            <p style="font-size:13.5px;color:#60708b;margin-bottom:12px">Demo Centre ID: <strong>DI-FR-01</strong> | Password: <strong>admin123</strong></p>
+            <form onsubmit="handleFranchiseLogin(event)" class="form-grid">
+              <div><label>Centre / Franchise ID *</label><input id="frLoginId" value="DI-FR-01" required></div>
+              <div><label>Password *</label><input id="frLoginPass" type="password" value="admin123" required></div>
+              <div class="full"><button class="btn btn-blue" type="submit">🔓 Login to Franchise Administration Dashboard</button></div>
+            </form>
+            <div id="frLoginError" style="margin-top:10px"></div>
+          </div>
+
+          <!-- FULL FRANCHISE PARTNER DASHBOARD (HIDDEN UNTIL LOGIN) -->
+          <div id="franchiseErpDashboard" style="display:none">
+            <div class="erp-shell">
+              <!-- LEFT SIDEBAR -->
+              <aside class="erp-sidebar">
+                <div class="erp-brand">
+                  <div class="erp-brand-icon">DI</div>
+                  <div>
+                    <strong style="font-size:13.5px;display:block;color:#ffc928">DEEPAK INSTITUTE</strong>
+                    <small style="font-size:11px;color:#93c5fd">ADMINISTRATION · DI-FR-01</small>
+                  </div>
+                </div>
+
+                <div class="erp-cat">BRANCH WORKSPACE</div>
+                <button class="erp-menu-btn active" onclick="openErpView('erpHomeView')">📊 Dashboard</button>
+                <button class="erp-menu-btn erp-menu-dark" onclick="openErpView('erpWalletView')">₹ My Wallet (QR Top-Up)</button>
+
+                <!-- Staff & Payroll -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subStaff')">👥 Staff &amp; Payroll <span>▾</span></button>
+                <div id="subStaff" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Employee Department')">Employee Department</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Employees')">Employees</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Attendance Report')">Attendance Report</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Advance Report')">Advance Report</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Generate Salary')">Generate Salary</button>
+                </div>
+
+                <div class="erp-cat">STUDENT MANAGEMENT</div>
+                <!-- Students -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subStudents')">🎓 Students <span>▾</span></button>
+                <div id="subStudents" class="erp-submenu open">
+                  <button class="erp-sub-item" onclick="openErpModule('Student Records')">Student Records</button>
+                  <button class="erp-sub-item" onclick="openErpModule('New Registration')">New Registration</button>
+                  <button class="erp-sub-item" onclick="openErpModule('ID Cards')">ID Cards</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Online Exam Admit Card')">Online Exam Admit Card</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Admit Cards')">Admit Cards</button>
+                </div>
+
+                <!-- Marksheet & Certificate -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subCert')">📜 Marksheet &amp; Certificate <span>▾</span></button>
+                <div id="subCert" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Marksheet Records')">Marksheet Records</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Certificate Issue')">Certificate Issue</button>
+                </div>
+
+                <div class="erp-cat">ACADEMIC SETUP</div>
+                <!-- Programs & Courses -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subProg')">📚 Programs &amp; Courses <span>▾</span></button>
+                <div id="subProg" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Programs')">Programs</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Courses')">Courses (85)</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Subjects')">Subjects</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Batches')">Batches</button>
+                </div>
+
+                <!-- Study Materials -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subStudy')">📖 Study Materials <span>▾</span></button>
+                <div id="subStudy" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Syllabus')">Syllabus</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Study Materials')">Study Materials</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Video Classes')">Video Classes</button>
+                </div>
+
+                <!-- Online Exam -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subExam')">💻 Online Exam <span>▾</span></button>
+                <div id="subExam" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Questions Management')">Questions Management</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Exam Results')">Results</button>
+                </div>
+
+                <div class="erp-cat">REPORTS &amp; FINANCE</div>
+                <!-- Reports & Analytics -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subRep')">📈 Reports &amp; Analytics <span>▾</span></button>
+                <div id="subRep" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Student Report')">Student Report</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Fee Report')">Fee Report</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Due Fee Report')">Due Fee Report</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Balance Sheet')">Balance Sheet</button>
+                </div>
+
+                <!-- Income -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subInc')">💰 Income <span>▾</span></button>
+                <div id="subInc" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Income Heads')">Income Heads</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Income Report')">Income Report</button>
+                </div>
+
+                <!-- Expenses -->
+                <button class="erp-menu-btn" onclick="toggleErpSub('subExp')">💸 Expenses <span>▾</span></button>
+                <div id="subExp" class="erp-submenu">
+                  <button class="erp-sub-item" onclick="openErpModule('Expense Heads')">Expense Heads</button>
+                  <button class="erp-sub-item" onclick="openErpModule('Expense Report')">Expense Report</button>
+                </div>
+
+                <button class="btn" style="margin-top:14px;background:#ef4444;color:#fff;width:100%" onclick="logoutFranchise()">🚪 Logout Centre</button>
+              </aside>
+
+              <!-- RIGHT MAIN WORKSPACE -->
+              <div class="erp-main">
+                <div class="erp-topbar">
+                  <div>
+                    <h3 style="color:#06163e">Dashboard — Authorized Franchise Centre (DI-FR-01)</h3>
+                    <small style="color:#60708b">Fast, secure and responsive control panel</small>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="background:#e8f0fe;color:#075bc7;padding:7px 14px;border-radius:20px;font-weight:bold;font-size:13.5px">
+                      Wallet: ₹<span id="topWalletBadge">38,400.00</span>
+                    </span>
+                    <button class="btn btn-blue" style="margin:0;padding:8px 14px" onclick="openErpView('erpWalletView')">+ Add Wallet Balance</button>
+                  </div>
+                </div>
+
+                <div class="erp-banner">
+                  <span>All institute operations are available from this responsive command centre.</span>
+                  <span>Session: 2026–2027</span>
+                </div>
+
+                <!-- VIEW 1: MAIN DASHBOARD OVERVIEW -->
+                <div id="erpHomeView">
+                  <h4 style="color:#06163e;margin-bottom:4px">Collection Report</h4>
+                  <p style="font-size:12.5px;color:#60708b;margin-bottom:12px">Live fee collection summary for your accessible branch</p>
+                  <div class="coll-grid">
+                    <div class="coll-card coll-green">
+                      <small>TODAY'S COLLECTION</small>
+                      <h3>₹<span id="todayCollAmt">0.00</span></h3>
+                      <small>20 Nov 2026 received amount</small>
+                    </div>
+                    <div class="coll-card coll-blue">
+                      <small>THIS MONTH COLLECTION</small>
+                      <h3>₹<span id="monthCollAmt">14,500.00</span></h3>
+                      <small>November 2026 collection</small>
+                    </div>
+                    <div class="coll-card coll-purple">
+                      <small>TOTAL COLLECTION</small>
+                      <h3>₹<span id="totalCollAmt">1,48,900.00</span></h3>
+                      <small>All available fee receipts</small>
+                    </div>
+                  </div>
+
+                  <h4 style="color:#06163e;margin-bottom:4px">Institute Overview</h4>
+                  <p style="font-size:12.5px;color:#60708b;margin-bottom:12px">Important counts and direct module links</p>
+                  <div class="ov-grid">
+                    <div class="ov-card" onclick="openErpView('erpWalletView')">
+                      <div class="ov-icon" style="background:#fee2e2;color:#dc2626">👛</div>
+                      <div><small>WALLET BALANCE</small><strong>₹<span id="cardWalletAmt">38,400.00</span></strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Student Records')">
+                      <div class="ov-icon" style="background:#dbeafe;color:#1d4ed8">🎓</div>
+                      <div><small>STUDENTS</small><strong id="totalStuCount">86</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Student Records')">
+                      <div class="ov-icon" style="background:#dcfce7;color:#15803d">✅</div>
+                      <div><small>ACTIVE STUDENTS</small><strong>86</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('New Registration')">
+                      <div class="ov-icon" style="background:#e0e7ff;color:#4338ca">➕</div>
+                      <div><small>TODAY ADMISSIONS</small><strong id="todayAdmCount">0</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Marksheet Records')">
+                      <div class="ov-icon" style="background:#ccfbf1;color:#0f766e">📋</div>
+                      <div><small>MARKSHEET STUDENTS</small><strong>2</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Marksheet Records')">
+                      <div class="ov-icon" style="background:#fce7f3;color:#be185d">🏅</div>
+                      <div><small>TOTAL MARKSHEETS</small><strong>3</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Courses')">
+                      <div class="ov-icon" style="background:#d1fae5;color:#047857">📚</div>
+                      <div><small>COURSES</small><strong>85</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Programs')">
+                      <div class="ov-icon" style="background:#e0f2fe;color:#0369a1">🏛️</div>
+                      <div><small>PROGRAMS</small><strong>3</strong></div>
+                    </div>
+                    <div class="ov-card" onclick="openErpModule('Due Fee Report')">
+                      <div class="ov-icon" style="background:#ffedd5;color:#c2410c">⏳</div>
+                      <div><small>PENDING STUDENTS</small><strong>0</strong></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 2: MY WALLET & QR CODE RECHARGE -->
+                <div id="erpWalletView" style="display:none">
+                  <div class="panel" style="margin-top:0">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+                      <h3 style="color:#074a9f">₹ My Branch Wallet &amp; QR Code Recharge</h3>
+                      <button class="btn" onclick="openErpView('erpHomeView')">← Back to Dashboard</button>
+                    </div>
+                    <p style="font-size:13.5px;color:#60708b;margin-top:6px">Scan the official Deepak Institute QR Code below to recharge your franchise wallet or submit student registration fees.</p>
+                    
+                    <div class="qr-card">
+                      <span class="tag">OFFICIAL UPI / QR PAYMENT</span>
+                      <h4 style="color:#06163e">DEEPAK INSTITUTE OF IT &amp; MANAGEMENT</h4>
+                      <div class="qr-frame">
+                        <svg><use href="#deepak-qr-svg"></use></svg>
+                      </div>
+                      <p style="font-size:13px;font-weight:bold;color:#0752ad">UPI / Mobile: 8750092908@upi</p>
+                      <form onsubmit="rechargeFranchiseWallet(event)" style="margin-top:14px;text-align:left">
+                        <label>Enter Paid Amount (₹) *</label>
+                        <input id="walletAddAmt" type="number" min="100" placeholder="e.g. 2000" required>
+                        <label style="display:block;margin-top:8px">UPI Transaction / UTR Reference No. *</label>
+                        <input id="walletUtrNo" placeholder="12-digit UTR Number" required>
+                        <button class="btn btn-green" style="width:100%;margin-top:12px" type="submit">✅ Verify &amp; Credit Wallet Balance</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VIEW 3: DYNAMIC ERP MODULE WORKSPACE -->
+                <div id="erpModuleView" style="display:none">
+                  <div class="panel" style="margin-top:0">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid #dce8f8;padding-bottom:10px">
+                      <h3 id="erpModuleTitle" style="color:#074a9f">Module Workspace</h3>
+                      <button class="btn" onclick="openErpView('erpHomeView')">← Back to Dashboard</button>
+                    </div>
+                    <div id="erpModuleBody" style="margin-top:14px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. STUDENT LOGIN -->
+        <div id="studentLoginTab" class="p-pane">
+          <h3 style="color:#074a9f;margin-bottom:10px">Student Portal Login</h3>
+          <form onsubmit="handleStudentLogin(event)" class="form-grid">
+            <div><label>Enrollment / Registration ID *</label><input id="stuLoginId" value="DI2026101" placeholder="Demo: DI2026101" required></div>
+            <div><label>Password / DOB *</label><input id="stuLoginPass" type="password" value="123456" placeholder="Demo: 123456" required></div>
+            <div class="full"><button class="btn btn-blue" type="submit">Login to Student Dashboard</button></div>
+          </form>
+          <div id="studentDashResult" style="margin-top:16px"></div>
+        </div>
+
+        <!-- C. STUDENT VERIFICATION -->
+        <div id="verifyTab" class="p-pane">
+          <h3 style="color:#074a9f;margin-bottom:10px">Online Student Registration Verification</h3>
+          <form onsubmit="verifyStudent(event)" class="form-grid">
+            <div class="full"><label>Enter Registration / Roll Number *</label><input id="verifyRegInput" value="DI2026101" placeholder="Try: DI2026101 or DI2026102" required></div>
+            <div class="full"><button class="btn" type="submit">Verify Student Record</button></div>
+          </form>
+          <div id="verifyResult" style="margin-top:16px"></div>
+        </div>
+
+        <!-- D. MARKSHEET & CERTIFICATE -->
+        <div id="certTab" class="p-pane">
+          <h3 style="color:#074a9f;margin-bottom:10px">Download / Verify Marksheet &amp; Certificate</h3>
+          <form onsubmit="showCertificate(event)" class="form-grid">
+            <div class="full"><label>Enter Registration Number *</label><input id="certRegInput" value="DI2026101" placeholder="Try: DI2026101" required></div>
+            <div class="full"><button class="btn" type="submit">Generate Marksheet &amp; Certificate</button></div>
+          </form>
+          <div id="certResult" style="margin-top:16px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 7. ONLINE FEE & QR PAYMENT SECTION ==================== -->
+  <section id="payment" class="page-section">
+    <div class="page-hero">
+      <h2>Online Fee &amp; Franchise QR Code Payment</h2>
+      <p>Scan QR Code via PhonePe, Google Pay, Paytm or any UPI App and submit payment receipt on WhatsApp</p>
+    </div>
+    <div class="container">
+      <div class="two-col">
+        <div class="qr-card" style="margin:0 auto;width:100%">
+          <span class="tag">SCAN &amp; PAY ANY UPI APP</span>
+          <h3 style="color:#06163e">DEEPAK INSTITUTE OF IT &amp; MANAGEMENT</h3>
+          <div class="qr-frame">
+            <svg><use href="#deepak-qr-svg"></use></svg>
+          </div>
+          <p style="font-weight:bold;color:#0752ad">Accepted: PhonePe • GPay • Paytm • BHIM UPI</p>
+          <p style="font-size:13px;color:#60708b;margin-top:4px">Support Helpline: 8750092908 / 7982716233</p>
+        </div>
+
+        <div class="panel" style="margin-top:0">
+          <h3 style="color:#074a9f;margin-bottom:10px">Submit Payment Confirmation</h3>
+          <form onsubmit="submitPublicPayment(event)">
+            <div style="margin-bottom:10px"><label>Payer Name (Student / Centre) *</label><input name="pname" required></div>
+            <div style="margin-bottom:10px"><label>Mobile Number *</label><input name="pmobile" type="tel" pattern="[0-9]{10}" required></div>
+            <div style="margin-bottom:10px">
+              <label>Payment Purpose *</label>
+              <select name="purpose" required>
+                <option>Student Admission / Course Fee</option>
+                <option>Franchise Wallet Recharge</option>
+                <option>Exam / Certificate Fee</option>
+                <option>University / NIOS Form Fee</option>
+              </select>
+            </div>
+            <div style="margin-bottom:10px"><label>Amount Paid (₹) *</label><input name="pamount" type="number" required></div>
+            <div style="margin-bottom:10px"><label>UTR / Transaction ID *</label><input name="putr" placeholder="12-digit UPI Ref No." required></div>
+            <button class="btn btn-green" type="submit">📲 Send Payment Receipt on WhatsApp</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 8. CONTACT US SECTION ==================== -->
+  <section id="contact" class="page-section">
+    <div class="page-hero">
+      <h2>Contact Us</h2>
+      <p>Course, Admission, Verification और Franchise enquiry के लिए संपर्क करें।</p>
+    </div>
+    <div class="container">
+      <div class="two-col">
+        <div class="panel" style="margin-top:0;line-height:2">
+          <h2 style="color:#074a9f">DEEPAK INSTITUTE OF IT &amp; MANAGEMENT</h2>
+          <p><strong>🏢 Head Office:</strong> Plot No. 75, G/F Right Side, Kh. No-4/7, Najafgarh, New Delhi - 110043</p>
+          <p><strong>🏫 Study Centre:</strong> Jharsaintly, Sector 58, Nearby Government School, Mathura Road, Haryana</p>
+          <p><strong>📞 Phone 1:</strong> <a href="tel:8750092908">8750092908</a></p>
+          <p><strong>📞 Phone 2:</strong> <a href="tel:7982716233">7982716233</a></p>
+          <p><strong>✉️ Email:</strong> <a href="mailto:dg.globalinstitute@gmail.com">dg.globalinstitute@gmail.com</a></p>
+          <div style="margin-top:12px">
+            <a class="btn" href="https://wa.me/918750092908" target="_blank" rel="noopener">💬 WhatsApp Us Now</a>
+            <button class="btn btn-blue" onclick="showSection('admission')">📝 Online Admission Form</button>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:0">
+          <h3 style="color:#074a9f;margin-bottom:10px">Quick Direct Message</h3>
+          <form onsubmit="sendQuickContact(event)">
+            <div style="margin-bottom:10px"><label>Your Name *</label><input name="cname" required></div>
+            <div style="margin-bottom:10px"><label>Mobile Number *</label><input name="cmobile" type="tel" pattern="[0-9]{10}" required></div>
+            <div style="margin-bottom:10px"><label>Your Query *</label><textarea name="cmsg" required></textarea></div>
+            <button class="btn" type="submit">Send on WhatsApp</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>DEEPAK INSTITUTE OF IT &amp; MANAGEMENT</h4>
+        <p>Learn • Grow • Succeed</p>
+        <p>Plot No. 75, G/F Right Side, Kh. No-4/7, Najafgarh, New Delhi - 110043</p>
+        <p>Study Centre: Jharsaintly, Sector 58, Nearby Government School</p>
+      </div>
+      <div>
+        <h4>Quick Navigation</h4>
+        <a href="#home" onclick="showSection('home');return false;">Home Page</a>
+        <a href="#courses" onclick="showSection('courses');return false;">Computer Courses</a>
+        <a href="#ugpg" onclick="showSection('ugpg');return false;">UG / PG Courses</a>
+        <a href="#admission" onclick="showSection('admission');return false;">Admission Enquiry</a>
+        <a href="#franchise" onclick="showSection('franchise');return false;">Franchise &amp; Policy</a>
+        <a href="#portal" onclick="showSection('portal');return false;">Franchise Partner ERP Login</a>
+      </div>
+      <div>
+        <h4>Important Portals &amp; Contact</h4>
+        <a href="https://www.digitalindia.gov.in" target="_blank" rel="noopener">Digital India (digitalindia.gov.in)</a>
+        <a href="https://www.nielit.gov.in" target="_blank" rel="noopener">NIELIT (nielit.gov.in)</a>
+        <p style="margin-top:8px">📞 8750092908 · 7982716233</p>
+        <p>✉️ dg.globalinstitute@gmail.com</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © 2026 DEEPAK INSTITUTE OF IT &amp; MANAGEMENT. All Rights Reserved.
+    </div>
+  </footer>
+
+  <script>
+    // ==================== TOAST NOTIFICATION HELPER ====================
+    function showToast(msg) {
+      const box = document.getElementById("toastBox");
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = msg;
+      box.appendChild(t);
+      setTimeout(() => { t.style.opacity = "0"; setTimeout(() => t.remove(), 300); }, 3600);
+    }
+
+    // ==================== ONE-CLICK ZIP PACKAGE DOWNLOAD ====================
+    async function downloadWebsiteZip() {
+      if (typeof JSZip === "undefined") {
+        showToast("ZIP library loading... please try again in a second.");
+        return;
+      }
+      const zip = new JSZip();
+      const fullHtml = "<!doctype html>\n" + document.documentElement.outerHTML;
+      zip.file("index.html", fullHtml);
+      zip.file("README.txt",
+        "DEEPAK INSTITUTE OF IT & MANAGEMENT - OFFICIAL PORTAL & FRANCHISE ERP\n" +
+        "=====================================================================\n" +
+        "1. Open index.html in any modern web browser.\n" +
+        "2. Franchise Partner ERP Demo Login: ID = DI-FR-01 | Password = admin123\n" +
+        "3. Student Portal Demo Login: ID = DI2026101 | Password = 123456\n" +
+        "4. Head Office: Plot No. 75, G/F Right Side, Kh. No-4/7, Najafgarh, New Delhi - 110043\n"
+      );
+      const blob = await zip.generateAsync({ type: "blob" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Deepak_Institute_Portal_ERP.zip";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast("📦 Deepak_Institute_Portal_ERP.zip downloaded!");
+    }
+
+    // ==================== 1. COURSES DATA (20 COURSES) ====================
+    const courses = [
+      ["DCA – 6 Months","Diploma","Computer Fundamentals|Operating System|MS Paint|Notepad and WordPad|MS Word|MS Excel|MS PowerPoint|Internet and Email|Hindi and English Typing","https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700"],
+      ["ADCA – 12 Months","Diploma","Computer Fundamentals|Windows|MS Word, Excel and PowerPoint|Internet|HTML and CSS Basics|Tally Prime and GST Basics|DTP Basics|Typing|Personality Development","https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700"],
+      ["MDCA – 18 Months","Diploma","Computer Fundamentals|Office Automation|Programming|Web Designing|Tally and GST|DTP|Hardware and Networking|Digital Marketing|Video Editing|Typing|Personality Development","https://images.unsplash.com/photo-1518770660439-4636190af475?w=700"],
+      ["Office Automation","Computer","Fundamentals|Operating System|Windows|MS Paint|Notepad|WordPad|MS Word|MS Excel|MS PowerPoint|Internet|Email|File Management","https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700"],
+      ["Programming","Computer","Programming Logic|Algorithm and Flowchart|C|C++|Java|Python|Variables and Data Types|Loops|Functions|Arrays|MySQL|Projects","https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=700"],
+      ["Web Designing","Computer","Web Concepts|HTML|HTML Forms|CSS|JavaScript Basics|Responsive Design|Website Layout|Domain and Hosting|AI Website Tools|Website Project","https://images.unsplash.com/photo-1547658719-da2b51169166?w=700"],
+      ["Personality Development","Skills","Communication Skills|Public Speaking|Interview Skills|Vocabulary|Extempore|Group Discussion|Presentation Skills|Confidence Building|Time Management","https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=700"],
+      ["Tally ERP-9 & Tally Prime with GST","Computer","Accounting Concepts|Voucher Entry|Debit and Credit|Journal and Ledger|Purchase and Sales|Inventory|Tally ERP-9|Tally Prime|GST Basics|TDS/TCS Overview|Payroll|Cost Centre|Balance Sheet","https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=700"],
+      ["DTP & Graphic Design","Computer","DTP Concepts|Photoshop|PageMaker|CorelDRAW Basics|Photo Editing|Poster Design|Banner Design|Visiting Card|Brochure|Print Layout","https://images.unsplash.com/photo-1455390582262-044cdead277a?w=700"],
+      ["Hardware & Networking","Computer","Computer Parts|Input and Output Devices|Motherboard|Hard Disk and SSD|RAM|Assembling|Windows Installation|Software Installation|Troubleshooting|Peer-to-Peer|LAN/WAN|IP Configuration","https://images.unsplash.com/photo-1518770660439-4636190af475?w=700"],
+      ["Hindi & English Typing","Skills","Keyboard Introduction|Finger Position|Touch Typing|English Typing|Hindi Unicode Typing|Kruti Dev Practice|Speed|Accuracy|Typing Test","https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=700"],
+      ["YouTube Master Course","Digital","Channel Creation|Channel Logo and Banner|Content Planning|Video Recording|Filmora|Premiere Pro Basics|Thumbnail Design|Title and Description|YouTube SEO|Copyright Awareness|YouTube Studio|Analytics|Monetization Policy Overview","https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=700"],
+      ["Digital Marketing","Digital","Digital Marketing Basics|SEO|On-page SEO|Off-page SEO|SMO|Social Media Marketing|PPC|Content Marketing|Video Marketing|Email Marketing|Analytics","https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700"],
+      ["AutoCAD & SolidWorks","Technical","CAD Introduction|2D Drawing|3D Modelling|Drawing Tools|Isometric|Dimensions|Plan|Elevation|Layout|SolidWorks Basics","https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=700"],
+      ["English Speaking","Skills","Grammar|Vocabulary|Daily-use Sentences|Reading|Writing|Conversation|Pronunciation|Public Speaking|Interview Preparation","https://images.unsplash.com/photo-1543269865-cbf427effbad?w=700"],
+      ["Advanced Excel","Computer","Formulas|Functions|IF|VLOOKUP/XLOOKUP|Sorting|Filtering|Pivot Tables|Charts|Data Validation|Dashboards","https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700"],
+      ["Beauty Parlour","Vocational","Skin Care|Facial|Threading|Waxing|Manicure|Pedicure|Makeup Basics|Hair Styling|Mehndi|Hygiene","https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=700"],
+      ["Silai Machine / Tailoring","Vocational","Machine Introduction|Machine Parts|Basic Stitching|Measurements|Cutting|Pattern Making|Blouse Stitching|Suit Stitching|Finishing","https://images.unsplash.com/photo-1590736969955-71cc94901144?w=700"],
+      ["NIOS 10th / 12th Form Guidance","Education","NIOS Programme Information|Subject Selection Guidance|Online Application Guidance|Document Checklist|Admission and Exam Information","https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=700"],
+      ["Distance University Courses","Education","B.A.|M.A.|B.Com|M.Com|BBA|MBA|BCA|MCA|B.Sc|M.Sc|B.Ed|Pharmacy (availability and eligibility subject to university rules)","https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=700"]
+    ];
+
+    // ==================== 2. UG / PG DEGREE SYLLABUS ====================
+    const degreeSyllabus = {
+      "MA":["Hindi: साहित्य का इतिहास, काव्य, गद्य, आलोचना","English: Poetry, Drama, Fiction, Literary Criticism","History: Ancient, Medieval and Modern History","Political Science: Political Theory, Indian Government, International Relations","Sociology: Sociological Theory, Indian Society, Research Methods","Economics: Microeconomics, Macroeconomics, Indian Economy"],
+      "BA":["चुने गए विषय के अनुसार Hindi, English, History, Political Science, Sociology, Economics आदि","Core और elective papers विश्वविद्यालय के अनुसार"],
+      "B.Com":["Financial Accounting","Business Law","Business Economics","Corporate Accounting","Taxation","Auditing"],
+      "M.Com":["Advanced Accounting","Corporate Finance","Business Research","Taxation","Auditing","Financial Management"],
+      "BBA":["Principles of Management","Marketing","Human Resource Management","Business Economics","Accounting"],
+      "MBA":["Marketing Management","Financial Management","Human Resource Management","Business Strategy","Operations Management"],
+      "BCA":["Computer Fundamentals","Programming","Data Structures","Database Management","Web Technology","Computer Networks"],
+      "MCA":["Advanced Programming","Data Structures","DBMS","Software Engineering","Networks","Operating Systems"],
+      "B.Sc":["Subject combination के अनुसार Physics, Chemistry, Mathematics, Biology या Computer Science","Practical and theory papers"],
+      "M.Sc":["Specialization के advanced papers","Research Methodology","Practical/Project work"],
+      "B.Ed":["Childhood and Growing Up","Learning and Teaching","Pedagogy","Assessment","School Internship"],
+      "Pharmacy":["Pharmaceutics","Pharmaceutical Chemistry","Pharmacology","Pharmacognosy","Practical training; programme-specific rules"]
+    };
+
+    // ==================== 3. STATES & COUNTRIES ====================
+    const indianStates = [
+      "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat",
+      "Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh",
+      "Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab",
+      "Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh",
+      "Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh",
+      "Dadra and Nagar Haveli and Daman and Diu","Delhi (NCT)","Jammu and Kashmir",
+      "Ladakh","Lakshadweep","Puducherry"
+    ];
+
+    const allCountries = [
+      "India","Afghanistan","Australia","Bahrain","Bangladesh","Bhutan","Brazil","Canada",
+      "China","France","Germany","Indonesia","Iran","Iraq","Italy","Japan","Kuwait",
+      "Malaysia","Maldives","Mauritius","Myanmar","Nepal","Netherlands","New Zealand",
+      "Oman","Pakistan","Philippines","Qatar","Russia","Saudi Arabia","Singapore",
+      "South Africa","South Korea","Spain","Sri Lanka","Thailand","Turkey",
+      "United Arab Emirates (UAE)","United Kingdom (UK)","United States (USA)","Vietnam"
+    ];
+
+    // ==================== 4. STUDENT RECORDS & WALLET STATE ====================
+    const studentRecords = {
+      "DI2026101": { name: "Rahul Sharma", father: "Ramesh Sharma", course: "ADCA – 12 Months", session: "2025-2026", grade: "A+ (88%)", status: "Verified & Certified", certNo: "CERT-DI-8841" },
+      "DI2026102": { name: "Priya Verma", father: "Suresh Verma", course: "Programming (C, C++, Java, Python)", session: "2026", grade: "A+ (91%)", status: "Verified & Certified", certNo: "CERT-DI-8842" },
+      "DI2026103": { name: "Ankit Yadav", father: "Rajesh Yadav", course: "Tally ERP-9 & Tally Prime with GST", session: "2026", grade: "A (84%)", status: "Active Student", certNo: "In Progress" },
+      "DI2026104": { name: "Neha Kumari", father: "Manoj Kumar", course: "MDCA – 18 Months", session: "2025-2026", grade: "A+ (89%)", status: "Active Student", certNo: "In Progress" }
+    };
+
+    let walletBalance = 38400.00;
+    let todayCollection = 0.00;
+    let totalStudents = 86;
+    let todayAdmissions = 0;
+    let lastSelectedCourse = "";
+
+    // ==================== 5. NAVIGATION & TABS ====================
+    function showSection(sectionId, btnEl) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('#mainNav button').forEach(b => b.classList.remove('active'));
+      if (btnEl) {
+        btnEl.classList.add('active');
+      } else {
+        const idxMap = { home:0, courses:1, ugpg:2, admission:3, franchise:4, portal:5, payment:6, contact:7 };
+        const navBtns = document.querySelectorAll('#mainNav button');
+        if (idxMap[sectionId] !== undefined && navBtns[idxMap[sectionId]]) {
+          navBtns[idxMap[sectionId]].classList.add('active');
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchPortalTab(tabId) {
+      document.querySelectorAll('.p-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.p-tab').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      const btn = document.getElementById('btn-' + tabId);
+      if (btn) btn.classList.add('active');
+    }
+
+    // ==================== 6. COURSES, DEGREES & DROPDOWNS ====================
+    function renderCourses(containerId, filterCat = 'All', limit = null) {
+      const root = document.getElementById(containerId);
+      if (!root) return;
+      root.innerHTML = "";
+      let list = filterCat === 'All' ? courses : courses.filter(c => c[1] === filterCat);
+      if (limit) list = list.slice(0, limit);
+
+      list.forEach(c => {
+        const el = document.createElement("article");
+        el.className = "card";
+        el.innerHTML = `
+          <img loading="lazy" src="${c[3]}" alt="${c[0]}" onerror="this.src='https://placehold.co/700x350/074a9f/ffc928?text=Deepak+Institute'">
+          <div class="card-body">
+            <div>
+              <span class="tag">${c[1]}</span>
+              <h3>${c[0]}</h3>
+              <p>पूरा सिलेबस देखने के लिए क्लिक करें।</p>
+            </div>
+            <button class="btn" type="button">View Syllabus</button>
+          </div>`;
+        el.querySelector("img").onclick = () => showSyllabus(c);
+        el.querySelector("button").onclick = () => showSyllabus(c);
+        root.append(el);
+      });
+    }
+
+    function filterCourses(cat, btn) {
+      document.querySelectorAll('#courseFilters .filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderCourses('courseCards', cat);
+    }
+
+    function showSyllabus(c) {
+      lastSelectedCourse = c[0];
+      showSection('courses');
+      const box = document.getElementById("syllabusBox");
+      document.getElementById("syllabusTitle").textContent = c[0] + " – Complete Syllabus";
+      const ul = document.getElementById("syllabusList");
+      ul.innerHTML = "";
+      c[2].split("|").forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        ul.append(li);
+      });
+      box.classList.add("show");
+      box.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function applySelectedCourse() {
+      showSection('admission');
+      const sel = document.getElementById('courseSelect');
+      if (sel && lastSelectedCourse) sel.value = lastSelectedCourse;
+    }
+
+    function renderDegrees() {
+      const root = document.getElementById("degreeCards");
+      if (!root) return;
+      Object.keys(degreeSyllabus).forEach(n => {
+        const el = document.createElement("article");
+        el.className = "card";
+        el.innerHTML = `
+          <div class="card-body">
+            <div>
+              <span class="tag">University Programme</span>
+              <h3>${n}</h3>
+              <p>Subject-wise syllabus देखें।</p>
+            </div>
+            <button class="btn" type="button">View Subjects</button>
+          </div>`;
+        el.querySelector("button").onclick = () => {
+          document.getElementById("degreeTitle").textContent = n + " – सामान्य विषय सूची";
+          const ul = document.getElementById("degreeList");
+          ul.innerHTML = "";
+          degreeSyllabus[n].forEach(t => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            ul.append(li);
+          });
+          const det = document.getElementById("degreeDetails");
+          det.classList.add("show");
+          det.scrollIntoView({ behavior: "smooth" });
+        };
+        root.append(el);
+      });
+    }
+
+    function populateDropdowns() {
+      const cSel = document.getElementById("courseSelect");
+      if (cSel) {
+        courses.forEach(c => {
+          const o = document.createElement("option");
+          o.value = c[0];
+          o.textContent = c[0];
+          cSel.append(o);
+        });
+      }
+      const countrySel = document.getElementById("countrySelect");
+      if (countrySel) {
+        allCountries.forEach(ct => {
+          const o = document.createElement("option");
+          o.value = ct;
+          o.textContent = ct;
+          if (ct === "India") o.selected = true;
+          countrySel.append(o);
+        });
+      }
+      toggleStateField();
+    }
+
+    function toggleStateField() {
+      const country = document.getElementById("countrySelect").value;
+      const stateSel = document.getElementById("stateSelect");
+      if (country !== "India") {
+        stateSel.innerHTML = `<option value="International / Outside India">International / Outside India</option>`;
+      } else {
+        stateSel.innerHTML = `<option value="">-- Select State / UT --</option>`;
+        indianStates.forEach(st => {
+          const o = document.createElement("option");
+          o.value = st;
+          o.textContent = st;
+          stateSel.append(o);
+        });
+      }
+    }
+
+    function renderRecentStudents() {
+      const box = document.getElementById("recentStudentsList");
+      if (!box) return;
+      box.innerHTML = "";
+      Object.entries(studentRecords).forEach(([reg, st]) => {
+        const div = document.createElement("div");
+        div.className = "feed-item";
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="student-avatar">${st.name.charAt(0)}</div>
+            <div>
+              <strong>${st.name}</strong> <small style="color:#60708b">(${reg})</small><br>
+              <small style="color:#0752ad">${st.course}</small>
+            </div>
+          </div>
+          <span class="tag" style="margin:0">Joined</span>`;
+        box.append(div);
+      });
+    }
+
+    // ==================== 7. FRANCHISE PARTNER ERP LOGIC ====================
+    function handleFranchiseLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById("frLoginId").value.trim().toUpperCase();
+      const pass = document.getElementById("frLoginPass").value.trim();
+      if (id === "DI-FR-01" && pass === "admin123") {
+        document.getElementById("frLoginFormBox").style.display = "none";
+        document.getElementById("franchiseErpDashboard").style.display = "block";
+        showToast("🔓 Logged into Franchise Admin ERP (DI-FR-01)");
+      } else {
+        document.getElementById("frLoginError").innerHTML = `<div class="notice" style="background:#ffe5e5;border-color:#d91e18">Invalid credentials. Use Demo ID: <strong>DI-FR-01</strong> | Password: <strong>admin123</strong></div>`;
+      }
+    }
+
+    function logoutFranchise() {
+      document.getElementById("franchiseErpDashboard").style.display = "none";
+      document.getElementById("frLoginFormBox").style.display = "block";
+      showToast("Logged out of Franchise Administration Panel.");
+    }
+
+    function toggleErpSub(subId) {
+      const el = document.getElementById(subId);
+      if (el) el.classList.toggle("open");
+    }
+
+    function openErpView(viewId) {
+      document.getElementById("erpHomeView").style.display = "none";
+      document.getElementById("erpWalletView").style.display = "none";
+      document.getElementById("erpModuleView").style.display = "none";
+      document.getElementById(viewId).style.display = "block";
+    }
+
+    function rechargeFranchiseWallet(e) {
+      e.preventDefault();
+      const amt = parseFloat(document.getElementById("walletAddAmt").value) || 0;
+      const utr = document.getElementById("walletUtrNo").value.trim();
+      walletBalance += amt;
+      todayCollection += amt;
+      const fmtWallet = walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      const fmtToday = todayCollection.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      document.getElementById("topWalletBadge").textContent = fmtWallet;
+      document.getElementById("cardWalletAmt").textContent = fmtWallet;
+      document.getElementById("todayCollAmt").textContent = fmtToday;
+      showToast(`✅ ₹${amt.toFixed(2)} credited to Branch Wallet (UTR: ${utr})`);
+      e.target.reset();
+      openErpView("erpHomeView");
+    }
+
+    function openErpModule(modName) {
+      openErpView("erpModuleView");
+      document.getElementById("erpModuleTitle").textContent = "Module: " + modName;
+      const body = document.getElementById("erpModuleBody");
+
+      if (modName === "New Registration") {
+        body.innerHTML = `
+          <form onsubmit="erpAddStudent(event)" class="form-grid">
+            <div><label>Student Full Name *</label><input name="sname" required></div>
+            <div><label>Father's Name *</label><input name="sfather" required></div>
+            <div><label>Select Course *</label><select name="scourse">${courses.map(c=>`<option>${c[0]}</option>`).join('')}</select></div>
+            <div><label>Session *</label><input name="ssession" value="2026-2027" required></div>
+            <div class="full"><button class="btn btn-blue" type="submit">Register Student &amp; Generate ID</button></div>
+          </form>`;
+      } else if (modName === "Student Records" || modName === "ID Cards" || modName === "Admit Cards" || modName === "Online Exam Admit Card") {
+        const rows = Object.entries(studentRecords).map(([id, s]) =>
+          `<tr><td><strong>${id}</strong></td><td>${s.name}</td><td>${s.father}</td><td>${s.course}</td><td>${s.status}</td><td><button class="btn" style="padding:4px 10px;font-size:12px" onclick="showToast('Generating ${modName === 'ID Cards' ? 'ID Card' : 'Admit Card'} for ${id}...');window.print()">Print ${modName === 'ID Cards' ? 'ID Card' : 'Admit Card'}</button></td></tr>`
+        ).join("");
+        body.innerHTML = `<table><tr><th>Reg ID</th><th>Student Name</th><th>Father Name</th><th>Course</th><th>Status</th><th>Action</th></tr>${rows}</table>`;
+      } else if (modName === "Marksheet Records" || modName === "Certificate Issue") {
+        const rows = Object.entries(studentRecords).map(([id, s]) =>
+          `<tr><td><strong>${id}</strong></td><td>${s.name}</td><td>${s.course}</td><td>${s.grade}</td><td>${s.certNo}</td><td><button class="btn btn-green" style="padding:4px 10px;font-size:12px" onclick="switchPortalTab('certTab');document.getElementById('certRegInput').value='${id}';showCertificate(new Event('submit'));">Open Certificate</button></td></tr>`
+        ).join("");
+        body.innerHTML = `<table><tr><th>Reg ID</th><th>Name</th><th>Course</th><th>Grade</th><th>Cert No</th><th>Action</th></tr>${rows}</table>`;
+      } else {
+        body.innerHTML = `
+          <div class="notice"><strong>${modName}</strong> — Authorized Branch Data Panel (DI-FR-01)</div>
+          <table>
+            <tr><th>Sr.</th><th>Particular / Record Title</th><th>Branch Code</th><th>Status</th></tr>
+            <tr><td>1</td><td>${modName} – Active Batch 2026</td><td>DI-FR-01</td><td>✅ Verified &amp; Up to Date</td></tr>
+            <tr><td>2</td><td>Head Office Sync (Plot No. 75, Najafgarh)</td><td>HO-DEL-75</td><td>✅ Connected</td></tr>
+          </table>`;
+      }
+    }
+
+    function erpAddStudent(e) {
+      e.preventDefault();
+      const f = e.target;
+      const newId = "DI2026" + (101 + Object.keys(studentRecords).length);
+      studentRecords[newId] = {
+        name: f.sname.value,
+        father: f.sfather.value,
+        course: f.scourse.value,
+        session: f.ssession.value,
+        grade: "Pursuing",
+        status: "Active Student",
+        certNo: "In Progress"
+      };
+      totalStudents++;
+      todayAdmissions++;
+      document.getElementById("totalStuCount").textContent = totalStudents;
+      document.getElementById("todayAdmCount").textContent = todayAdmissions;
+      renderRecentStudents();
+      showToast("✅ Student Registered! New ID: " + newId);
+      openErpModule("Student Records");
+    }
+
+    // ==================== 8. WHATSAPP & PUBLIC PORTAL LOGIC ====================
+    function sendWhatsApp(e) {
+      e.preventDefault();
+      const f = e.target;
+      const msg = `DEEPAK INSTITUTE ADMISSION ENQUIRY\nName: ${f.name.value}\nFather: ${f.father.value}\nMobile: ${f.mobile.value}\nCourse: ${f.course.value}\nQualification: ${f.qualification.value}\nAddress: ${f.address.value}`;
+      window.open("https://wa.me/918750092908?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    function sendFranchise(e) {
+      e.preventDefault();
+      const f = e.target;
+      const msg = `DEEPAK INSTITUTE FRANCHISE ENQUIRY\nName: ${f.fname.value}\nMobile: ${f.fmobile.value}\nCountry: ${f.country.value}\nState/UT: ${f.state.value}\nCity/Area: ${f.area.value}\nSpace: ${f.space.value}\nMessage: ${f.message.value}`;
+      window.open("https://wa.me/918750092908?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    function submitPublicPayment(e) {
+      e.preventDefault();
+      const f = e.target;
+      const msg = `DEEPAK INSTITUTE QR PAYMENT RECEIPT\nPayer: ${f.pname.value}\nMobile: ${f.pmobile.value}\nPurpose: ${f.purpose.value}\nAmount: ₹${f.pamount.value}\nUTR Ref: ${f.putr.value}`;
+      window.open("https://wa.me/918750092908?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    function sendQuickContact(e) {
+      e.preventDefault();
+      const f = e.target;
+      const msg = `DEEPAK INSTITUTE CONTACT QUERY\nName: ${f.cname.value}\nMobile: ${f.cmobile.value}\nQuery: ${f.cmsg.value}`;
+      window.open("https://wa.me/918750092908?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    function handleStudentLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById("stuLoginId").value.trim().toUpperCase();
+      const pass = document.getElementById("stuLoginPass").value.trim();
+      const out = document.getElementById("studentDashResult");
+      const st = studentRecords[id];
+      if (st && pass === "123456") {
+        out.innerHTML = `<div class="notice"><strong>Welcome, ${st.name} (${id})!</strong><br>Course: ${st.course} | Status: ${st.status} | Grade: ${st.grade}</div>`;
+      } else {
+        out.innerHTML = `<div class="notice" style="background:#ffe5e5;border-color:#d91e18">Invalid credentials. Demo ID: <strong>DI2026101</strong> | Password: <strong>123456</strong></div>`;
+      }
+    }
+
+    function verifyStudent(e) {
+      e.preventDefault();
+      const id = document.getElementById("verifyRegInput").value.trim().toUpperCase();
+      const out = document.getElementById("verifyResult");
+      const st = studentRecords[id];
+      if (st) {
+        out.innerHTML = `<table>
+          <tr><th>Registration No.</th><td>${id}</td><th>Status</th><td>✅ ${st.status}</td></tr>
+          <tr><th>Student Name</th><td>${st.name}</td><th>Father's Name</th><td>${st.father}</td></tr>
+          <tr><th>Course</th><td>${st.course}</td><th>Certificate No.</th><td>${st.certNo}</td></tr>
+        </table>`;
+      } else {
+        out.innerHTML = `<div class="notice" style="background:#ffe5e5;border-color:#d91e18">No record found for <strong>${id}</strong>. Try demo ID: <strong>DI2026101</strong></div>`;
+      }
+    }
+
+    function showCertificate(e) {
+      if (e) e.preventDefault();
+      const id = document.getElementById("certRegInput").value.trim().toUpperCase();
+      const out = document.getElementById("certResult");
+      const st = studentRecords[id];
+      if (st) {
+        out.innerHTML = `
+          <div class="cert-box">
+            <div style="width:74px;height:74px;margin:0 auto;border-radius:50%;overflow:hidden;border:2px solid #b8860b;background:#000">
+              <svg style="width:100%;height:100%"><use href="#deepak-logo-svg"></use></svg>
+            </div>
+            <h2>DEEPAK INSTITUTE OF IT &amp; MANAGEMENT</h2>
+            <h3>CERTIFICATE OF COMPLETION &amp; MARKSHEET</h3>
+            <p>This is to certify that <strong>${st.name}</strong> (S/O, D/O <strong>${st.father}</strong>)</p>
+            <p>Registration No: <strong>${id}</strong> | Certificate No: <strong>${st.certNo}</strong></p>
+            <p>has successfully completed <strong>${st.course}</strong> in Session <strong>${st.session}</strong> with Grade <strong>${st.grade}</strong>.</p>
+            <button class="btn btn-blue" onclick="window.print()">🖨️ Print Certificate</button>
+          </div>`;
+      } else {
+        out.innerHTML = `<div class="notice" style="background:#ffe5e5;border-color:#d91e18">Certificate not found for <strong>${id}</strong>. Try demo ID: <strong>DI2026101</strong></div>`;
+      }
+    }
+
+    // ==================== INITIALIZE ALL ====================
+    window.onload = function() {
+      renderCourses("homeFeaturedCourses", "All", 4);
+      renderCourses("courseCards", "All");
+      renderDegrees();
+      populateDropdowns();
+      renderRecentStudents();
+    };
+  </script>
+</body>
+</html>
